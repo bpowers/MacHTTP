@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 SET(CMAKE_CXX_FLAGS "-Ofast")
 
 # Set SSL_ENABLED to OFF if you don't require https communication
-SET(SSL_ENABLED OFF)
+SET(SSL_ENABLED ON)
 
 # If debugging is enabled in the mbedtls library, then enable debugging here
 # ADD_DEFINITIONS (-DMBEDTLS_DEBUG="ON")
