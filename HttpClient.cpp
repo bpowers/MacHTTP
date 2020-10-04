@@ -475,7 +475,7 @@ bool HttpClient::SslConnect()
 #endif
 
 	/* Initialize the RNG and the session data */
-	mbedtls_net_init(&_server_fd, (GiveTimePtr)Yield);
+	mbedtls_net_init(&_server_fd);
 	mbedtls_ssl_init(&_ssl);
 	mbedtls_ssl_config_init(&_conf);
 	mbedtls_x509_crt_init(&_cacert);
