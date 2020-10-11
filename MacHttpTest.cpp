@@ -12,7 +12,8 @@ string _requests[1][3] = {
     // { "Image",
     // "https://www.pvsm.ru/images/2018/09/30/umelec-sozdal-WiFi-modul-dlya-Macintosh-SE-30-modeli-1989-goda-2.jpg",
     // "true" },
-    {"API request", "https://api.stripe.com/v1/payment_intents", "amount=2000&currency=usd&payment_method_types[]=card"},
+    {"API request", "https://api.stripe.com/v1/payment_intents",
+     "amount=2000&currency=usd&payment_method_types[]=card"},
 };
 
 bool _doRequest = true;
