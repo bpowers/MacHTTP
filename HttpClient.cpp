@@ -464,9 +464,9 @@ bool HttpClient::SslConnect() {
 }
 
 bool HttpClient::SslHandshake() {
-  printf("ssl_handshake start");
+  printf("ssl_handshake start\n");
   int ret = mbedtls_ssl_handshake(&_ssl);
-  printf("ssl_handshake end");
+  printf("ssl_handshake end\n");
 
   if (ret == 0) {
     // Handshake complete
