@@ -35,20 +35,20 @@ extern "C" {
  * path will be used to null terminate the hostname if no port is supplied.
  */
 struct yuarel {
-	char *scheme; /* scheme, without ":" and "//" */
-	char *username; /* username, default: NULL */
-	char *password; /* password, default: NULL */
-	char *host; /* hostname or IP address */
-	int port; /* port, default: 0 */
-	char *path; /* path, without leading "/", default: NULL */
-	char *query; /* query, default: NULL */
-	char *fragment; /* fragment, default: NULL */
+  char *scheme;   /* scheme, without ":" and "//" */
+  char *username; /* username, default: NULL */
+  char *password; /* password, default: NULL */
+  char *host;     /* hostname or IP address */
+  int port;       /* port, default: 0 */
+  char *path;     /* path, without leading "/", default: NULL */
+  char *query;    /* query, default: NULL */
+  char *fragment; /* fragment, default: NULL */
 };
 
 /* A struct to hold the query string parameter values. */
 struct yuarel_param {
-	char *key;
-	char *val;
+  char *key;
+  char *val;
 };
 
 /**

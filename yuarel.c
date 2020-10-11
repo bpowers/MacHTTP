@@ -30,16 +30,14 @@
  * str: the string containing the number.
  * len: Number of characters to parse.
  */
-static inline int
-natoi(const char *str, size_t len)
-{
-	int i, r = 0;
-	for (i = 0; i < len; i++) {
-		r *= 10;
-		r += str[i] - '0';
-	}
+static inline int natoi(const char *str, size_t len) {
+  int i, r = 0;
+  for (i = 0; i < len; i++) {
+    r *= 10;
+    r += str[i] - '0';
+  }
 
-	return r;
+  return r;
 }
 
 /**
@@ -49,10 +47,8 @@ natoi(const char *str, size_t len)
  *
  * Returns 1 if relative, otherwise 0.
  */
-static inline int
-is_relative(const char *url)
-{
-	return (*url == '/') ? 1 : 0;
+static inline int is_relative(const char *url) {
+  return (*url == '/') ? 1 : 0;
 }
 
 /**
@@ -62,25 +58,23 @@ is_relative(const char *url)
  *
  * Returns a pointer to the hostname on success, otherwise NULL.
  */
-static inline char *
-parse_scheme(char *str)
-{
-	char *s;
+static inline char *parse_scheme(char *str) {
+  char *s;
 
-	/* If not found or first in string, return error */
-	s = strchr(str, ':');
-	if (s == NULL || s == str) {
-		return NULL;
-	}
+  /* If not found or first in string, return error */
+  s = strchr(str, ':');
+  if (s == NULL || s == str) {
+    return NULL;
+  }
 
-	/* If not followed by two slashes, return error */
-	if (s[1] == '\0' || s[1] != '/' || s[2] == '\0' || s[2] != '/') {
-		return NULL;
-	}
+  /* If not followed by two slashes, return error */
+  if (s[1] == '\0' || s[1] != '/' || s[2] == '\0' || s[2] != '/') {
+    return NULL;
+  }
 
-	*s = '\0'; // Replace ':' with NULL
+  *s = '\0';  // Replace ':' with NULL
 
-	return s + 3;
+  return s + 3;
 }
 
 /**
@@ -93,37 +87,29 @@ parse_scheme(char *str)
  * Returns a pointer to the character after the one to search for. If not
  * found, NULL is returned.
  */
-static inline char *
-find_and_terminate(char *str, char find)
-{
-	str = strchr(str, find);
-	if (NULL == str) {
-		return NULL;
-	}
+static inline char *find_and_terminate(char *str, char find) {
+  str = strchr(str, find);
+  if (NULL == str) {
+    return NULL;
+  }
 
-	*str = '\0';
-	return str + 1;
+  *str = '\0';
+  return str + 1;
 }
 
 /* Yes, the following functions could be implemented as preprocessor macros
      instead of inline functions, but I think that this approach will be more
      clean in this case. */
-static inline char *
-find_fragment(char *str)
-{
-	return find_and_terminate(str, '#');
+static inline char *find_fragment(char *str) {
+  return find_and_terminate(str, '#');
 }
 
-static inline char *
-find_query(char *str)
-{
-	return find_and_terminate(str, '?');
+static inline char *find_query(char *str) {
+  return find_and_terminate(str, '?');
 }
 
-static inline char *
-find_path(char *str)
-{
-	return find_and_terminate(str, '/');
+static inline char *find_path(char *str) {
+  return find_and_terminate(str, '/');
 }
 
 /**
@@ -134,90 +120,88 @@ find_path(char *str)
  *
  * Returns 0 on success, otherwise -1.
  */
-int
-yuarel_parse(struct yuarel *url, char *u)
-{
-	if (NULL == url || NULL == u) {
-		return -1;
-	}
+int yuarel_parse(struct yuarel *url, char *u) {
+  if (NULL == url || NULL == u) {
+    return -1;
+  }
 
-	memset(url, 0, sizeof (struct yuarel));
+  memset(url, 0, sizeof(struct yuarel));
 
-	/* (Fragment) */
-	url->fragment = find_fragment(u);
+  /* (Fragment) */
+  url->fragment = find_fragment(u);
 
-	/* (Query) */
-	url->query = find_query(u);
+  /* (Query) */
+  url->query = find_query(u);
 
-	/* Relative URL? Parse scheme and hostname */
-	if (!is_relative(u)) {
-		/* Scheme */
-		url->scheme = u;
-		u = parse_scheme(u);
-		if (u == NULL) {
-			return -1;
-		}
+  /* Relative URL? Parse scheme and hostname */
+  if (!is_relative(u)) {
+    /* Scheme */
+    url->scheme = u;
+    u = parse_scheme(u);
+    if (u == NULL) {
+      return -1;
+    }
 
-		/* Host */
-		if ('\0' == *u) {
-			return -1;
-		}
-		url->host = u;
+    /* Host */
+    if ('\0' == *u) {
+      return -1;
+    }
+    url->host = u;
 
-		/* (Path) */
-		url->path = find_path(u);
+    /* (Path) */
+    url->path = find_path(u);
 
-		/* (Credentials) */
-		u = strchr(url->host, '@');
-		if (NULL != u) {
-			/* Missing credentials? */
-			if (u == url->host) {
-				return -1;
-			}
+    /* (Credentials) */
+    u = strchr(url->host, '@');
+    if (NULL != u) {
+      /* Missing credentials? */
+      if (u == url->host) {
+        return -1;
+      }
 
-			url->username = url->host;
-			url->host = u + 1;
-			*u = '\0';
+      url->username = url->host;
+      url->host = u + 1;
+      *u = '\0';
 
-			u = strchr(url->username, ':');
-			if (NULL == u) {
-				return -1;
-			}
+      u = strchr(url->username, ':');
+      if (NULL == u) {
+        return -1;
+      }
 
-			url->password = u + 1;
-			*u = '\0';
-		}
+      url->password = u + 1;
+      *u = '\0';
+    }
 
-		/* Missing hostname? */
-		if ('\0' == *url->host) {
-			return -1;
-		}
+    /* Missing hostname? */
+    if ('\0' == *url->host) {
+      return -1;
+    }
 
-		/* (Port) */
-		u = strchr(url->host, ':');
-		if (NULL != u && (NULL == url->path || u < url->path)) {
-			*(u++) = '\0';
-			if ('\0' == *u) {
-				return -1;
-			}
+    /* (Port) */
+    u = strchr(url->host, ':');
+    if (NULL != u && (NULL == url->path || u < url->path)) {
+      *(u++) = '\0';
+      if ('\0' == *u) {
+        return -1;
+      }
 
-			if (url->path) {
-				url->port = natoi(u, url->path - u - 1);
-			} else {
-				url->port = atoi(u);
-			}
-		}
+      if (url->path) {
+        url->port = natoi(u, url->path - u - 1);
+      } else {
+        url->port = atoi(u);
+      }
+    }
 
-		/* Missing hostname? */
-		if ('\0' == *url->host) {
-			return -1;
-		}
-	} else {
-		/* (Path) */
-		url->path = find_path(u);
-	}
+    /* Missing hostname? */
+    if ('\0' == *url->host) {
+      return -1;
+    }
+  } else {
+    /* (Path) */
+    url->path = find_path(u);
+  }
 
-	return 0;
+  return 0;
 }
 
 /**
@@ -231,60 +215,57 @@ yuarel_parse(struct yuarel *url, char *u)
  * parts: a pointer to an array of (char *) where to store the result.
  * max_parts: max number of parts to parse.
  */
-int
-yuarel_split_path(char *path, char **parts, int max_parts)
-{
-	int i = 0;
+int yuarel_split_path(char *path, char **parts, int max_parts) {
+  int i = 0;
 
-	do {
-		/* Forward to after slashes */
-		while (*path == '/') path++;
+  do {
+    /* Forward to after slashes */
+    while (*path == '/')
+      path++;
 
-		if ('\0' == *path) {
-			break;
-		}
+    if ('\0' == *path) {
+      break;
+    }
 
-		parts[i++] = path;
+    parts[i++] = path;
 
-		path = strchr(path, '/');
-		if (NULL == path) {
-			break;
-		}
+    path = strchr(path, '/');
+    if (NULL == path) {
+      break;
+    }
 
-		*(path++) = '\0';
-	} while (i < max_parts);
+    *(path++) = '\0';
+  } while (i < max_parts);
 
-	return i;
+  return i;
 }
 
-int
-yuarel_parse_query(char *query, char delimiter, struct yuarel_param *params, int max_params)
-{
-	int i = 0;
+int yuarel_parse_query(char *query, char delimiter, struct yuarel_param *params, int max_params) {
+  int i = 0;
 
-	if (NULL == query || '\0' == *query) {
-		return -1;
-	}
+  if (NULL == query || '\0' == *query) {
+    return -1;
+  }
 
-	params[i++].key = query;
-	while (i < max_params && NULL != (query = strchr(query, delimiter))) {
-		*query = '\0';
-		params[i].key = ++query;
-		params[i].val = NULL;
+  params[i++].key = query;
+  while (i < max_params && NULL != (query = strchr(query, delimiter))) {
+    *query = '\0';
+    params[i].key = ++query;
+    params[i].val = NULL;
 
-		/* Go back and split previous param */
-		if (i > 0) {
-			if ((params[i - 1].val = strchr(params[i - 1].key, '=')) != NULL) {
-				*(params[i - 1].val)++ = '\0';
-			}
-		}
-		i++;
-	}
+    /* Go back and split previous param */
+    if (i > 0) {
+      if ((params[i - 1].val = strchr(params[i - 1].key, '=')) != NULL) {
+        *(params[i - 1].val)++ = '\0';
+      }
+    }
+    i++;
+  }
 
-	/* Go back and split last param */
-	if ((params[i - 1].val = strchr(params[i - 1].key, '=')) != NULL) {
-		*(params[i - 1].val)++ = '\0';
-	}
+  /* Go back and split last param */
+  if ((params[i - 1].val = strchr(params[i - 1].key, '=')) != NULL) {
+    *(params[i - 1].val)++ = '\0';
+  }
 
-	return i;
+  return i;
 }

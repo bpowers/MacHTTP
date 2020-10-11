@@ -7,83 +7,74 @@
 #include <sstream>
 #include "Uri.h"
 
-extern "C"
-{
-	#include "yuarel.h"
+extern "C" {
+#include "yuarel.h"
 }
 
-Uri::Uri()
-{ }
-
-Uri::Uri(string uriStr)
-{
-	struct yuarel url;
-
-	Scheme = "";
-	Host = "";
-	Path = "";
-
-	memset(&url, 0, sizeof(struct yuarel));
-	if (yuarel_parse(&url, (char*)uriStr.c_str()) == -1)
-	{
-		throw invalid_argument("Invalid uri");
-	}
-
-	if (url.scheme != NULL)
-		Scheme = string(url.scheme);
-
-	if (url.host != NULL)
-		Host = string(url.host);
-
-	if (url.path != NULL)
-	{
-		Path = string(url.path);
-
-		if (url.query != NULL)
-		{
-			Path += "?" + string(url.query);
-		}
-
-		if (Path.length() == 0 || (Path.length() > 0 && Path.substr(0, 1) != "/"))
-		{
-			Path = "/" + Path;
-		}
-	}
+Uri::Uri() {
 }
 
-string Uri::ToString()
-{
-	return Scheme + "://" + Host + Path;
+Uri::Uri(string uriStr) {
+  struct yuarel url;
+
+  Scheme = "";
+  Host = "";
+  Path = "";
+
+  memset(&url, 0, sizeof(struct yuarel));
+  if (yuarel_parse(&url, (char *)uriStr.c_str()) == -1) {
+    throw invalid_argument("Invalid uri");
+  }
+
+  if (url.scheme != NULL)
+    Scheme = string(url.scheme);
+
+  if (url.host != NULL)
+    Host = string(url.host);
+
+  if (url.path != NULL) {
+    Path = string(url.path);
+
+    if (url.query != NULL) {
+      Path += "?" + string(url.query);
+    }
+
+    if (Path.length() == 0 || (Path.length() > 0 && Path.substr(0, 1) != "/")) {
+      Path = "/" + Path;
+    }
+  }
 }
 
-bool Uri::IsAbsolute(string uriStr)
-{
-	// To lowercase for comparison
-	transform(uriStr.begin(), uriStr.end(), uriStr.begin(), ::tolower);
-
-	return uriStr.find("http") == 0;
+string Uri::ToString() {
+  return Scheme + "://" + Host + Path;
 }
 
-string Uri::Encode(const string &value) 
-{
-	ostringstream escaped;
-	escaped.fill('0');
-	escaped << hex;
+bool Uri::IsAbsolute(string uriStr) {
+  // To lowercase for comparison
+  transform(uriStr.begin(), uriStr.end(), uriStr.begin(), ::tolower);
 
-	for (string::const_iterator i = value.begin(), n = value.end(); i != n; ++i) {
-		string::value_type c = (*i);
+  return uriStr.find("http") == 0;
+}
 
-		// Keep alphanumeric and other accepted characters intact
-		if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
-			escaped << c;
-			continue;
-		}
+string Uri::Encode(const string &value) {
+  ostringstream escaped;
+  escaped.fill('0');
+  escaped << hex;
 
-		// Any other characters are percent-encoded
-		escaped << uppercase;
-		escaped << '%' << setw(2) << int((unsigned char)c);
-		escaped << nouppercase;
-	}
+  for (string::const_iterator i = value.begin(), n = value.end(); i != n; ++i) {
+    string::value_type c = (*i);
 
-	return escaped.str();
+    // Keep alphanumeric and other accepted characters intact
+    if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+      escaped << c;
+      continue;
+    }
+
+    // Any other characters are percent-encoded
+    escaped << uppercase;
+    escaped << '%' << setw(2) << int((unsigned char)c);
+    escaped << nouppercase;
+  }
+
+  return escaped.str();
 }

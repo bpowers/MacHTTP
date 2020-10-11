@@ -6,27 +6,21 @@
 
 using namespace std;
 
-enum HttpResponseErrorCode
-{
-	ConnectionError,
-	ConnectionTimeout,
-	SSLError
-};
+enum HttpResponseErrorCode { ConnectionError, ConnectionTimeout, SSLError };
 
 #pragma once
-class HttpResponse
-{
+class HttpResponse {
 public:
-	HttpResponse();
-	void Reset();
-	bool Success;
-	bool MessageComplete;
-	unsigned int StatusCode;
-	HttpResponseErrorCode ErrorCode;
-	string ErrorMsg;
-	string Content;
-	map<string, string> Headers;
-	string CurrentHeader;
+  HttpResponse();
+  void Reset();
+  bool Success;
+  bool MessageComplete;
+  unsigned int StatusCode;
+  HttpResponseErrorCode ErrorCode;
+  string ErrorMsg;
+  string Content;
+  map<string, string> Headers;
+  string CurrentHeader;
 };
 
 #endif
