@@ -249,22 +249,30 @@ void HttpClient::ProcessRequests()
 
 void HttpClient::HttpRequest()
 {
-	if (Connect())
-		if (Request())
-			Response();
-
+	if (Connect()) {
+          if (Request()) {
+            Response();
+          }
+        }
 	NetClose();
 }
 
 #ifdef SSL_ENABLED
 void HttpClient::HttpsRequest()
 {
-	if (SslConnect())
-		if(SslHandshake())
-			if (SslRequest())
-				SslResponse();
+  printf("before SSL connect\n");
+  if (SslConnect()) {
+    printf("before SSL handshake\n");
+    if (SslHandshake()) {
+      printf("before SSL request\n");
+      if (SslRequest()) {
+        printf("before SSL respone\n");
+        SslResponse();
+      }
+    }
+  }
 
-	SslClose();
+  SslClose();
 }
 #endif // SSL_ENABLED
 
@@ -565,7 +573,9 @@ bool HttpClient::SslConnect()
 
 bool HttpClient::SslHandshake()
 {
-	int ret = mbedtls_ssl_handshake(&_ssl);
+  printf("ssl_handshake start");
+  int ret = mbedtls_ssl_handshake(&_ssl);
+  printf("ssl_handshake end");
 
 	if (ret == 0)
 	{

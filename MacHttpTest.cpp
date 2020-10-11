@@ -8,12 +8,10 @@ using namespace std;
 
 #define arraylen(arr) ((int) (sizeof (arr) / sizeof (arr)[0]))
 
-string _requests[4][3] = 
+string _requests[1][3] =
 {
-	{ "Small http request", "http://httpbin.org/status/418", "false" },
-	{ "Big http request", "http://httpbin.org/html", "false" },
-	{ "302 redirect", "http://httpbin.org/redirect-to?url=/status/418", "false" },
-	{ "Image", "http://www.pvsm.ru/images/2018/09/30/umelec-sozdal-WiFi-modul-dlya-Macintosh-SE-30-modeli-1989-goda-2.jpg", "true" }
+    // { "Image", "https://www.pvsm.ru/images/2018/09/30/umelec-sozdal-WiFi-modul-dlya-Macintosh-SE-30-modeli-1989-goda-2.jpg", "true" },
+    {"API request", "https://api.stripe.com/v1/", "false"},
 };
 
 bool _doRequest = true;
@@ -27,7 +25,7 @@ int main()
 {
 	#ifdef SSL_ENABLED
 	// Set the lowest cipher suite that the server accepts to maximise performance
-	_httpClient.SetCipherSuite(MBEDTLS_TLS_RSA_WITH_AES_128_CBC_SHA);
+	_httpClient.SetCipherSuite(MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA);
 	#endif
 
 	while (_curRequest < arraylen(_requests))
@@ -41,14 +39,14 @@ int main()
 	}
 
 	printf("All done!\n");
-	getchar(); getchar();
+  getchar();
 	return 0;
 }
 
 void WriteImage(string& msg)
 {
 	FILE *fp;
-	fp = fopen("Mac HD (68K):mac.jpg", "wb");
+	fp = fopen("MacOS:mac.jpg", "wb");
 
 	if (fp)
 	{
