@@ -111,19 +111,17 @@ private:
   void SslClose();
 
   int _overrideCipherSuite[2] = {0, 0};
-  int _cipherSuites[14] = {MBEDTLS_TLS_RSA_WITH_AES_128_CBC_SHA,
+  int _cipherSuites[14] = {MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+                           MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+                           MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+                           MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+                           MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                           MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                           MBEDTLS_TLS_RSA_WITH_AES_128_CBC_SHA,
                            MBEDTLS_TLS_RSA_WITH_AES_128_CBC_SHA256,
                            MBEDTLS_TLS_RSA_WITH_AES_128_GCM_SHA256,
                            MBEDTLS_TLS_RSA_WITH_AES_256_CBC_SHA,
                            MBEDTLS_TLS_RSA_WITH_AES_256_CBC_SHA256,
-                           MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-                           MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-                           MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-                           MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
-                           MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                           MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                           MBEDTLS_TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-                           MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
                            0};
 #endif  // SSL_ENABLED
 };

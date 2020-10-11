@@ -12,14 +12,14 @@ string _requests[1][3] = {
     // { "Image",
     // "https://www.pvsm.ru/images/2018/09/30/umelec-sozdal-WiFi-modul-dlya-Macintosh-SE-30-modeli-1989-goda-2.jpg",
     // "true" },
-    {"API request", "https://api.stripe.com/v1/", "false"},
+    {"API request", "https://api.stripe.com/v1/payment_intents", "amount=2000&currency=usd&payment_method_types[]=card"},
 };
 
 bool _doRequest = true;
 int _curRequest = 0;
 HttpClient _httpClient;
 
-void DoRequest(string &title, string &url);
+void DoRequest(const string &title, const string &url, const string &body);
 void OnResponse(HttpResponse &response);
 
 int main() {
@@ -28,9 +28,11 @@ int main() {
   _httpClient.SetCipherSuite(MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA);
 #endif
 
+  _httpClient.SetAuthorization("Basic c2tfdGVzdF81VlNRWHZpSW11cGJZSDNNNmtqYkFSMzM6");
+
   while (_curRequest < arraylen(_requests)) {
     if (_doRequest) {
-      DoRequest(_requests[_curRequest][0], _requests[_curRequest][1]);
+      DoRequest(_requests[_curRequest][0], _requests[_curRequest][1], _requests[_curRequest][2]);
     }
 
     _httpClient.ProcessRequests();
@@ -53,7 +55,7 @@ void WriteImage(string &msg) {
   }
 }
 
-void DoRequest(string &title, string &url) {
+void DoRequest(const string &title, const string &url, const string &body) {
   printf("%s (press return)...\n", title.c_str());
   fflush(stdout);
   getchar();
@@ -61,7 +63,7 @@ void DoRequest(string &title, string &url) {
 
   printf("%s says:\n\n", url.c_str());
 
-  _httpClient.Get(url, OnResponse);
+  _httpClient.Post(url, body, OnResponse);
   _doRequest = false;
 }
 
