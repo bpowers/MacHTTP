@@ -55,17 +55,17 @@ public:
 private:
   static const int BUF_SIZE = 8192;
   string _baseUri;
-  string _proxyHost;
-  string _stunnelHost;
-  string _authorization;
+  string _proxyHost = "";
+  string _stunnelHost = "";
+  string _authorization = "";
   Uri _uri;
   string _request;
-  RequestStatus _status;
+  RequestStatus _status = Idle;
   HttpResponse _response;
   std::function<void(HttpResponse &)> _onComplete;
-  int _proxyPort;
-  int _stunnelPort;
-  int _debugLevel;
+  int _proxyPort = 0;
+  int _stunnelPort = 0;
+  int _debugLevel = 0;
   bool _cancel;
 
   void Init(string baseUri);
@@ -111,7 +111,7 @@ private:
   void SslClose();
 
   int _overrideCipherSuite[2] = {0, 0};
-  int _cipherSuites[14] = {MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+  int _cipherSuites[12] = {MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
                            MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
                            MBEDTLS_TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
                            MBEDTLS_TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,

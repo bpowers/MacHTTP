@@ -94,13 +94,6 @@ void HttpClient::Init(string baseUri) {
   MaxApplZone();
 
   _baseUri = baseUri;
-  _proxyHost = "";
-  _stunnelHost = "";
-  _authorization = "";
-  _proxyPort = 0;
-  _stunnelPort = 0;
-  _debugLevel = 0;
-  _status = Idle;
   InitParser();
 
 #ifdef SSL_ENABLED
