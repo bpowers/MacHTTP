@@ -1,7 +1,10 @@
 #include <ctype.h>
 #include <string.h>
-#include "HttpClient.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
+#include "HttpClient.h"
 
 extern "C" {
 #include <MacTCP.h>
@@ -423,6 +426,22 @@ void HttpClient::SetCipherSuite(int cipherSuite) {
   _overrideCipherSuite[0] = cipherSuite;
 }
 
+static FILE *debugFd;
+
+static void my_debug(void *ctx, int level, const char *file, int line, const char *str) {
+  ((void)level);
+  ((void)ctx);
+  ((void)file);
+  ((void)line);
+
+  struct timeval now;
+  // memset(&now, 0, sizeof(now));
+  gettimeofday(&now, nullptr);
+
+  fprintf(debugFd, "%d.%.3d: %s", (int)now.tv_sec, (int)(now.tv_usec) / 1000, str);
+  fflush(debugFd);
+}
+
 bool HttpClient::SslConnect() {
   const char *pers = "HttpClient";
   int ret;
@@ -431,10 +450,16 @@ bool HttpClient::SslConnect() {
   mbedtls_debug_set_threshold(_debugLevel);
 #endif
 
+  debugFd = fopen("log.txt", "w");
+
   /* Initialize the RNG and the session data */
   mbedtls_net_init(&_server_fd);
   mbedtls_ssl_init(&_ssl);
   mbedtls_ssl_config_init(&_conf);
+
+  mbedtls_debug_set_threshold(2);
+  mbedtls_ssl_conf_dbg(&_conf, my_debug, stdout);
+
   mbedtls_x509_crt_init(&_cacert);
   mbedtls_ctr_drbg_init(&_ctr_drbg);
   mbedtls_entropy_init(&_entropy);
@@ -513,6 +538,7 @@ bool HttpClient::SslHandshake() {
   printf("ssl_handshake start\n");
   int ret = mbedtls_ssl_handshake(&_ssl);
   printf("ssl_handshake end\n");
+  fflush(debugFd);
 
   if (ret == 0) {
     // Handshake complete
