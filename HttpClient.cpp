@@ -597,8 +597,16 @@ bool HttpClient::SslRequest() {
   return true;
 }
 
+#ifdef MBEDTLS_SSL_MAX_CONTENT_LEN
+#define SSL_RESPONSE_BUFFER_SIZE MBEDTLS_SSL_MAX_CONTENT_LEN
+#else
+#define SSL_RESPONSE_BUFFER_SIZE 16384
+#endif
+
+unsigned char buf[SSL_RESPONSE_BUFFER_SIZE];
+
 bool HttpClient::SslResponse() {
-  unsigned char buf[4096];
+  memset(buf, 0, SSL_RESPONSE_BUFFER_SIZE * sizeof(unsigned char));
   int len;
 
   while (true) {
