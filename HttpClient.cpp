@@ -433,13 +433,13 @@ static void my_debug(void *ctx, int level, const char *file, int line, const cha
   ((void)ctx);
   ((void)file);
   ((void)line);
+  ((void)str);
 
-  struct timeval now;
-  // memset(&now, 0, sizeof(now));
-  gettimeofday(&now, nullptr);
+  unsigned long now = 0;
+  ReadDateTime(&now);
 
-  fprintf(debugFd, "%d.%.3d: %s", (int)now.tv_sec, (int)(now.tv_usec) / 1000, str);
-  fflush(debugFd);
+  fprintf(debugFd, "%d: %s", (int)now, str);
+  // fflush(debugFd);
 }
 
 bool HttpClient::SslConnect() {
@@ -457,8 +457,8 @@ bool HttpClient::SslConnect() {
   mbedtls_ssl_init(&_ssl);
   mbedtls_ssl_config_init(&_conf);
 
-  mbedtls_debug_set_threshold(2);
-  mbedtls_ssl_conf_dbg(&_conf, my_debug, stdout);
+  // mbedtls_debug_set_threshold(2);
+  // mbedtls_ssl_conf_dbg(&_conf, my_debug, stdout);
 
   mbedtls_x509_crt_init(&_cacert);
   mbedtls_ctr_drbg_init(&_ctr_drbg);
@@ -469,8 +469,8 @@ bool HttpClient::SslConnect() {
     _response.ErrorCode = SSLError;
     _response.ErrorMsg = "mbedtls_ctr_drbg_seed returned " + to_string(ret);
     return false;
-  }
 
+  }
   /* Initialize certificates */
   ret = mbedtls_x509_crt_parse(&_cacert, DigiCertHighAssuranceEVRootCA_crt, DigiCertHighAssuranceEVRootCA_crt_len);
   if (ret < 0) {
@@ -499,8 +499,9 @@ bool HttpClient::SslConnect() {
     return false;
   }
 
-  mbedtls_ssl_conf_ca_chain(&_conf, &_cacert, NULL);
-  mbedtls_ssl_conf_authmode(&_conf, MBEDTLS_SSL_VERIFY_REQUIRED);
+  // mbedtls_ssl_conf_ca_chain(&_conf, &_cacert, NULL);
+  // mbedtls_ssl_conf_authmode(&_conf, MBEDTLS_SSL_VERIFY_REQUIRED);
+  mbedtls_ssl_conf_authmode(&_conf, MBEDTLS_SSL_VERIFY_NONE);
   mbedtls_ssl_conf_rng(&_conf, mbedtls_ctr_drbg_random, &_ctr_drbg);
 
 #ifdef MBEDTLS_DEBUG
